@@ -81,6 +81,18 @@ All features are combined in an interactive **Gradio web interface**.
 
 ---
 
+## Ethical AI & Bias Considerations
+- **Summarization Bias:** Automated summarizers may unintentionally omit important context or emphasize certain details, leading to biased interpretations of news articles.  
+- **Named Entity Recognition (NER):** Location extraction relies on pretrained models, which may misidentify or fail to recognize non-Western or underrepresented place names.  
+- **Geocoding Risks:** Mapping real-world locations from text could potentially expose sensitive information if applied carelessly.  
+- **Mitigation:**  
+  - This project is intended for research and educational use only.  
+  - Summaries should be treated as *assistance*, not as authoritative sources.  
+  - Users should verify extracted locations and summaries against original sources.  
+
+
+---
+
 ## Contributing
 
 Pull requests are welcome! Please fork the repo and create a feature branch.
