@@ -2,7 +2,6 @@
 
 [🌐 Geo-Summarizer Demo](https://huggingface.co/spaces/varshakaturu/geo-summarizer)
 
-
 This project processes raw news articles to:
 1. **Summarize** them into short abstractive summaries (using Pegasus).
 2. **Answer user questions** about the article (using DistilBERT QA).
@@ -91,6 +90,8 @@ All features are combined in an interactive **Gradio web interface**.
   - Users should verify extracted locations and summaries against original sources.  
 
 
+---
+[Kaggle Dataset](https://www.kaggle.com/datasets/gowrishankarp/newspaper-text-summarization-cnn-)
 ---
 
 ## Contributing
