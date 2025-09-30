@@ -15,6 +15,7 @@ from folium.plugins import MarkerCluster
 import gradio as gr
 import torch
 import os
+from rouge_score import rouge_scorer
 
 # =========================
 # Ensure spaCy model is available
@@ -208,6 +209,34 @@ def process_dataset(input_csv, output_csv, max_rows=5251, progress_interval=50):
     # Final save
     df.to_csv(output_train, index=False)
     print(f"Finished processing {total_rows} rows. Output saved to {output_train}")
+
+
+
+## Rouge Scores
+# Load CSV
+df = pd.read_csv("/content/drive/MyDrive/geo_summarizer/output_train.csv")
+# Initialize ROUGE scorer
+scorer = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stemmer=True)
+# Store scores
+rouge1_scores, rouge2_scores, rougeL_scores = [], [], []
+for _, row in df.iterrows():
+    reference = str(row['reference'])      # or a longer reference text if available
+    summary = str(row['summary'])
+    scores = scorer.score(reference, summary)
+    rouge1_scores.append(scores['rouge1'].fmeasure)
+    rouge2_scores.append(scores['rouge2'].fmeasure)
+    rougeL_scores.append(scores['rougeL'].fmeasure)
+# Add scores to dataframe
+df['rouge1'] = rouge1_scores
+df['rouge2'] = rouge2_scores
+df['rougeL'] = rougeL_scores
+# Calculate average ROUGE scores
+avg_rouge1 = sum(rouge1_scores) / len(rouge1_scores)
+avg_rouge2 = sum(rouge2_scores) / len(rouge2_scores)
+avg_rougeL = sum(rougeL_scores) / len(rougeL_scores)
+print(f"Average ROUGE-1: {avg_rouge1:.4f}")
+print(f"Average ROUGE-2: {avg_rouge2:.4f}")
+print(f"Average ROUGE-L: {avg_rougeL:.4f}")
 
 # =========================
 # Gradio Interface
