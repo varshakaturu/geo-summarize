@@ -1,51 +1,6 @@
-Hugging Face's logo
-Hugging Face
-Models
-Datasets
-Spaces
-Community
-Docs
-Pricing
-
-
-
-Spaces:
-
-varshakaturu
-/
-geo-summarizer
-
-
-like
-1
-
-App
-Files
-Community
-Settings
-geo-summarizer
-/
-app.py
-
-varshakaturu's picture
-varshakaturu
-Update app.py
-9a6f07e
-verified
-5 minutes ago
-raw
-
-Copy download link
-history
-blame
-edit
-delete
-
-5.78 kB
 # =========================
 # Install dependencies
 # =========================
-# Run these once in your environment
 # pip install transformers spacy geopy pandas beautifulsoup4 folium gradio torch --quiet
 
 import spacy
@@ -193,7 +148,7 @@ def generate_map(locations):
     return m._repr_html_()
 
 # =========================
-# Main processing
+# Main processing for Gradio
 # =========================
 def process_article(article_text, question=None):
     summary = summarize_full_text(article_text)
@@ -212,6 +167,47 @@ def process_article(article_text, question=None):
     map_html = generate_map(coords) if coords else "<p>No locations to map</p>"
 
     return summary, map_html, answer
+
+# =========================
+# Batch Processing Function for CSV
+# =========================
+def process_dataset(input_csv, output_csv, max_rows=5251, progress_interval=50):
+    df = pd.read_csv(train_csv).head(max_rows)
+    
+    if 'summary' not in df.columns:
+        df['summary'] = ""
+    if 'locations' not in df.columns:
+        df['locations'] = ""
+    if 'lat_lon' not in df.columns:
+        df['lat_lon'] = ""
+    
+    total_rows = len(df)
+    for idx, row in df.iterrows():
+        article_text = row.get('article_text', "")
+        
+        # Summarize
+        summary = summarize_full_text(article_text)
+        df.at[idx, 'summary'] = summary
+        
+        # Locations & geocoding
+        locations = extract_locations(article_text)
+        coords = []
+        for loc in locations:
+            g = geocode_location(loc)
+            if g:
+                coords.append({"location": loc, "lat": g["lat"], "lon": g["lon"]})
+        
+        df.at[idx, 'locations'] = [loc['location'] for loc in coords]
+        df.at[idx, 'lat_lon'] = [{"lat": loc['lat'], "lon": loc['lon']} for loc in coords]
+        
+        # Show progress
+        if (idx + 1) % progress_interval == 0 or (idx + 1) == total_rows:
+            print(f"Processed {idx+1}/{total_rows} rows")
+            df.to_csv(output_csv, index=False)  # save intermittently
+    
+    # Final save
+    df.to_csv(output_train, index=False)
+    print(f"Finished processing {total_rows} rows. Output saved to {output_train}")
 
 # =========================
 # Gradio Interface
@@ -233,5 +229,3 @@ iface = gr.Interface(
 
 # Launch interface
 iface.launch(share=True)
-
-
