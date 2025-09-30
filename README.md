@@ -32,6 +32,9 @@ All features are combined in an interactive **Gradio web interface**.
   - `summary` → abstractive summary  
   - `locations` → detected places  
   - `lat`, `lon` → geographic coordinates (latitude and longitude)
+    
+- **Rouge Scores**  
+  Gives Rouge 1, Rouge 2 and Rouge L scores.
 
 - **Interactive Web Interface**  
   Built with Hugging Face - Gradio.
@@ -65,6 +68,8 @@ All features are combined in an interactive **Gradio web interface**.
 - Map with Locations: Interactive Folium map with detected places.
 
 - QA Answer: Direct answer to the user’s question.
+
+- Rouge Scores: Accuracy of the model.
 
 ---
 
